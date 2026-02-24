@@ -1,0 +1,67 @@
+---
+title: "SpareRoom Nigeria: Lessons from Building a Rental Marketplace"
+date: "2024-10-10"
+excerpt: "What I learned building a room rental marketplace for Lagos with BVN verification and escrow payments."
+tags: ["Next.js", "Paystack", "Marketplace"]
+---
+
+# SpareRoom Nigeria: Lessons from Building a Rental Marketplace
+
+Finding a room in Lagos can be a nightmare. Scams are rampant, trust is low, and the process is opaque. SpareRoom Nigeria was built to change that.
+
+## The Challenge
+
+The Lagos rental market has specific problems:
+
+- **Fraud** — Fake listings and scam agents
+- **No verification** — No way to verify landlords or tenants
+- **Payment risks** — Money exchanged with no protection
+- **Limited options** — Most listings are word-of-mouth
+
+## The Solution
+
+SpareRoom Nigeria tackles each problem with technology:
+
+### BVN Verification
+
+Every user must verify their identity with their Bank Verification Number (BVN). This creates accountability and reduces fraud significantly.
+
+### Paystack Escrow
+
+Money is held in escrow until both parties confirm the transaction. This protects both tenants and landlords.
+
+### Verified Listings
+
+All rooms go through a verification process before going live. Photos, location, and pricing are verified for accuracy.
+
+## Technical Architecture
+
+### Payment Integration
+
+Integrating Paystack for escrow payments required careful handling:
+
+- Split payments for platform fees
+- Refund workflows for disputes
+- Transaction logging for compliance
+
+### Performance at Scale
+
+With 500+ rooms across 19+ neighborhoods:
+
+- Server-side filtering and pagination
+- Image optimization for listing photos
+- Cached search results for common queries
+
+## Results
+
+- **500+** verified rooms listed
+- **19+** neighborhoods covered
+- **Zero** fraud cases with BVN verification
+
+## Key Lessons
+
+1. **Trust is the product** — In a market plagued by scams, trust features matter more than flashy UI.
+2. **Local payment solutions** — Paystack was the right choice for the Nigerian market.
+3. **Start with one city** — Focusing on Lagos allowed us to build density before expanding.
+
+Visit [SpareRoom Nigeria](https://www.spareroomnigeria.com) to find your next room.

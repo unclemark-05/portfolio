@@ -1,0 +1,57 @@
+---
+title: "Building Opiro: A Direct-to-Fan Music Platform"
+date: "2024-12-15"
+excerpt: "How I built a direct-to-fan music platform where artists keep 85% of revenue, using Next.js and Supabase."
+tags: ["Next.js", "Supabase", "Music Tech"]
+---
+
+# Building Opiro: A Direct-to-Fan Music Platform
+
+The music industry has long had a problem: artists get a tiny fraction of streaming revenue. Opiro was born from the idea that artists deserve more.
+
+## The Problem
+
+Traditional streaming platforms pay artists fractions of a penny per stream. For independent artists, this model simply doesn't work. They need a platform that puts them first.
+
+## The Solution
+
+Opiro is a direct-to-fan platform where artists keep **85% of revenue**. Fans can discover new music, support artists directly, and build personal libraries.
+
+### Key Technical Decisions
+
+**Next.js for the Frontend**
+
+I chose Next.js for its server-side rendering capabilities and excellent developer experience. The App Router made it easy to structure the application with:
+
+- Server components for data-heavy pages
+- Client components for interactive music players
+- API routes for backend logic
+
+**Supabase for the Backend**
+
+Supabase provided everything I needed:
+
+- PostgreSQL database for artist and track data
+- Authentication for artist and fan accounts
+- Storage for audio files and album artwork
+- Real-time subscriptions for live updates
+
+**TanStack Query for Data Fetching**
+
+With TanStack Query, I implemented:
+
+- Optimistic updates for likes and follows
+- Infinite scroll for music discovery
+- Background refetching for real-time data
+
+## Lessons Learned
+
+1. **Start with the data model** — Getting the database schema right early saves countless hours.
+2. **PWA matters for music** — Users expect to access their library offline.
+3. **Audio is complex** — Handling audio playback across browsers requires careful attention.
+
+## What's Next
+
+Opiro continues to grow. Upcoming features include artist analytics, collaborative playlists, and a mobile app.
+
+Visit [Opiro](https://www.opiro.store) to explore the platform.

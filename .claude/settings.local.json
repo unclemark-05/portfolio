@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.opiro.store)",
+      "WebFetch(domain:www.scripturecall.com)",
+      "WebFetch(domain:www.spareroomnigeria.com)",
+      "WebSearch",
+      "Bash(cd /c/Users/chapter/Desktop/portfolio && npx create-next-app@latest . --typescript --tailwind --app --eslint --no-src-dir --import-alias \"@/*\" --use-npm 2>&1)",
+      "Bash(cd /c/Users/chapter/Desktop && echo \"N\" | npx create-next-app@latest portfolio-temp --typescript --tailwind --app --eslint --no-src-dir --import-alias \"@/*\" --use-npm 2>&1)",
+      "Bash(echo Done:*)",
+      "Bash(cd /c/Users/chapter/Desktop/portfolio && npm install three @react-three/fiber @react-three/drei gsap @gsap/react next-themes gray-matter next-mdx-remote rehype-pretty-code @supabase/supabase-js shiki 2>&1)",
+      "Bash(cd /c/Users/chapter/Desktop/portfolio && npm install -D @types/three 2>&1)",
+      "Bash(cd:*)",
+      "Bash(cd /c/Users/chapter/Desktop/portfolio && npm run build 2>&1)"
+    ]
+  }
+}
