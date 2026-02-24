@@ -121,15 +121,26 @@ export default function HeroSection() {
 
         <div className="relative h-[350px] sm:h-[400px] md:h-[500px]">
           {isMobile ? (
-            <div className="flex h-full items-center justify-center gap-6">
-              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-violet-500/10 text-3xl">
-                💻
+            <div className="flex h-full flex-col items-center justify-center gap-4">
+              <div className="flex h-28 w-28 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/20 to-accent/20 shadow-lg shadow-primary/10">
+                <span className="text-4xl font-black tracking-tight text-primary">M.S</span>
               </div>
-              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-amber-500/10 text-3xl">
-                &lt;/&gt;
-              </div>
-              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-500/10 text-3xl">
-                ⚙️
+              <div className="flex gap-3">
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-violet-500/10">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-violet-400">
+                    <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
+                  </svg>
+                </div>
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-500/10">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue-400">
+                    <rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" x2="16" y1="21" y2="21" /><line x1="12" x2="12" y1="17" y2="21" />
+                  </svg>
+                </div>
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-500/10">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-emerald-400">
+                    <circle cx="12" cy="12" r="3" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                  </svg>
+                </div>
               </div>
             </div>
           ) : (

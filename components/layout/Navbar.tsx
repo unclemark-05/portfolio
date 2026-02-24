@@ -78,8 +78,11 @@ export default function Navbar() {
         }`}
       >
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <a href="#home" className="text-xl font-bold tracking-tight">
-            {siteConfig.name}
+          <a href="/#home" className="flex items-center gap-2 text-xl font-bold tracking-tight">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xs font-bold text-primary-foreground">
+              M.S
+            </span>
+            <span className="hidden sm:inline">{siteConfig.name}</span>
           </a>
 
           <nav ref={navRef} className="relative hidden items-center gap-1 md:flex">

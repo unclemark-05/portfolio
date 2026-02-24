@@ -60,7 +60,7 @@ export default function Footer() {
 
         <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
           <p>Built with Next.js, Three.js &amp; GSAP</p>
-          <p className="mt-1">&copy; {year} {siteConfig.name}. All rights reserved.</p>
+          <p className="mt-1">&copy; {year} M.S — {siteConfig.name}. All rights reserved.</p>
         </div>
       </div>
     </footer>
