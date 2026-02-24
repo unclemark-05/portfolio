@@ -44,7 +44,7 @@ export default function OpiroModel({ position = [-4, 0, 0] as [number, number, n
     }
 
     // Smooth emissive intensity lerp
-    targetEmissive.current = hovered ? 1.2 : 0.3;
+    targetEmissive.current = hovered ? 1.5 : 0.6;
     currentEmissive.current += (targetEmissive.current - currentEmissive.current) * 0.1;
 
     // Apply emissive to wave materials
@@ -79,26 +79,36 @@ export default function OpiroModel({ position = [-4, 0, 0] as [number, number, n
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[1.2, 1.2, 0.05, 64]} />
           <meshStandardMaterial
-            color="#1a1a2e"
-            metalness={0.8}
-            roughness={0.2}
+            color="#2d2d4e"
+            emissive="#8B5CF6"
+            emissiveIntensity={0.15}
+            metalness={0.7}
+            roughness={0.25}
           />
         </mesh>
 
         {/* Center label */}
         <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
           <cylinderGeometry args={[0.35, 0.35, 0.02, 32]} />
-          <meshStandardMaterial color="#8B5CF6" metalness={0.5} roughness={0.3} />
+          <meshStandardMaterial
+            color="#8B5CF6"
+            emissive="#8B5CF6"
+            emissiveIntensity={0.4}
+            metalness={0.5}
+            roughness={0.3}
+          />
         </mesh>
 
         {/* Groove rings */}
         {[0.5, 0.7, 0.9, 1.05].map((radius, i) => (
           <mesh key={i} rotation={[Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
-            <torusGeometry args={[radius, 0.008, 8, 64]} />
+            <torusGeometry args={[radius, 0.01, 8, 64]} />
             <meshStandardMaterial
-              color="#2a2a3e"
-              metalness={0.9}
-              roughness={0.1}
+              color="#8B5CF6"
+              emissive="#8B5CF6"
+              emissiveIntensity={0.2}
+              metalness={0.8}
+              roughness={0.15}
             />
           </mesh>
         ))}
@@ -109,29 +119,29 @@ export default function OpiroModel({ position = [-4, 0, 0] as [number, number, n
           <meshStandardMaterial
             color="#8B5CF6"
             transparent
-            opacity={0.4}
+            opacity={0.6}
             emissive="#8B5CF6"
-            emissiveIntensity={0.3}
+            emissiveIntensity={0.6}
           />
         </mesh>
         <mesh ref={wave2Ref} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[1.8, 0.015, 8, 64]} />
+          <torusGeometry args={[1.8, 0.02, 8, 64]} />
           <meshStandardMaterial
             color="#8B5CF6"
             transparent
-            opacity={0.25}
+            opacity={0.4}
             emissive="#8B5CF6"
-            emissiveIntensity={0.2}
+            emissiveIntensity={0.5}
           />
         </mesh>
         <mesh ref={wave3Ref} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[2.1, 0.01, 8, 64]} />
+          <torusGeometry args={[2.1, 0.015, 8, 64]} />
           <meshStandardMaterial
             color="#8B5CF6"
             transparent
-            opacity={0.15}
+            opacity={0.3}
             emissive="#8B5CF6"
-            emissiveIntensity={0.1}
+            emissiveIntensity={0.4}
           />
         </mesh>
       </group>

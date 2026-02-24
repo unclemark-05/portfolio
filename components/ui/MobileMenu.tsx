@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { navLinks } from "@/lib/constants";
 import gsap from "gsap";
 
@@ -45,6 +45,27 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     }
   }, [isOpen]);
 
+  const handleLinkClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // For hash links on the home page, handle scroll manually
+    const isHashLink = href.startsWith("/#");
+
+    if (isHashLink && window.location.pathname === "/") {
+      e.preventDefault();
+      const sectionId = href.slice(2);
+      onClose();
+      // Wait for menu close animation, then scroll
+      setTimeout(() => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 350);
+    } else {
+      // For non-hash links or hash links from other pages, let browser navigate
+      onClose();
+    }
+  }, [onClose]);
+
   return (
     <div className="fixed inset-0 z-40 md:hidden" style={{ pointerEvents: "none" }}>
       <div
@@ -63,7 +84,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             <a
               key={link.href}
               href={link.href}
-              onClick={onClose}
+              onClick={(e) => handleLinkClick(e, link.href)}
               className="block rounded-lg px-4 py-3 text-lg font-medium transition-colors hover:bg-muted"
               style={{ opacity: 0 }}
             >
