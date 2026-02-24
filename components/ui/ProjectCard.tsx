@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import type { Project } from "@/lib/constants";
-import { scrollSlideIn } from "@/lib/animations";
+import { scrollSlideIn, scrollClipReveal } from "@/lib/animations";
 
 interface ProjectCardProps {
   project: Project;
@@ -11,13 +11,36 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project, index }: ProjectCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
   const isEven = index % 2 === 0;
 
   useEffect(() => {
     if (cardRef.current) {
       scrollSlideIn(cardRef.current, isEven ? "left" : "right");
     }
+    if (imageRef.current) {
+      scrollClipReveal(imageRef.current);
+    }
   }, [isEven]);
+
+  // 3D tilt on hover (desktop only)
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (window.innerWidth < 768 || !innerRef.current) return;
+    const rect = innerRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    innerRef.current.style.transform = `perspective(1000px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg)`;
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!innerRef.current) return;
+    innerRef.current.style.transition = "transform 0.15s ease-out";
+    innerRef.current.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg)";
+    setTimeout(() => {
+      if (innerRef.current) innerRef.current.style.transition = "";
+    }, 150);
+  }, []);
 
   return (
     <div
@@ -25,15 +48,19 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
       className="opacity-0"
     >
       <div
-        className={`grid gap-8 rounded-2xl border border-border bg-card p-6 sm:p-8 md:grid-cols-2 md:items-center ${
+        ref={innerRef}
+        className={`glow-card grid gap-8 rounded-2xl border border-border bg-card p-6 sm:p-8 md:grid-cols-2 md:items-center ${
           !isEven ? "md:direction-rtl" : ""
         }`}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
       >
         {/* Image */}
         <div className={`${!isEven ? "md:order-2" : ""}`}>
           <div
+            ref={imageRef}
             className="aspect-video overflow-hidden rounded-xl"
-            style={{ backgroundColor: `${project.color}15` }}
+            style={{ backgroundColor: `${project.color}15`, clipPath: "inset(100% 0% 0% 0%)" }}
           >
             <div className="flex h-full items-center justify-center text-muted-foreground">
               <div className="text-center">

@@ -12,8 +12,15 @@ export default function OpiroModel({ position = [-4, 0, 0] as [number, number, n
   const wave2Ref = useRef<THREE.Mesh>(null);
   const wave3Ref = useRef<THREE.Mesh>(null);
 
+  // Smooth scale and emissive targets
+  const targetScale = useRef(1);
+  const currentEmissive = useRef(0.3);
+  const targetEmissive = useRef(0.3);
+
   useFrame((state) => {
     const t = state.clock.elapsedTime;
+
+    // Wave pulsing
     if (wave1Ref.current) {
       wave1Ref.current.scale.setScalar(1 + Math.sin(t * 2) * 0.1);
     }
@@ -23,9 +30,30 @@ export default function OpiroModel({ position = [-4, 0, 0] as [number, number, n
     if (wave3Ref.current) {
       wave3Ref.current.scale.setScalar(1 + Math.sin(t * 2 + 2) * 0.1);
     }
+
+    // Gentle sine-wave idle rotation instead of constant increment
     if (groupRef.current) {
-      groupRef.current.rotation.y += 0.003;
+      groupRef.current.rotation.y = Math.sin(t * 0.3) * 0.15;
+
+      // Smooth scale lerp
+      targetScale.current = hovered ? 1.1 : 1;
+      groupRef.current.scale.lerp(
+        new THREE.Vector3(targetScale.current, targetScale.current, targetScale.current),
+        0.1
+      );
     }
+
+    // Smooth emissive intensity lerp
+    targetEmissive.current = hovered ? 1.2 : 0.3;
+    currentEmissive.current += (targetEmissive.current - currentEmissive.current) * 0.1;
+
+    // Apply emissive to wave materials
+    [wave1Ref, wave2Ref, wave3Ref].forEach((ref) => {
+      if (ref.current) {
+        const mat = (ref.current as THREE.Mesh).material as THREE.MeshStandardMaterial;
+        if (mat) mat.emissiveIntensity = currentEmissive.current;
+      }
+    });
   });
 
   const handleClick = () => {
@@ -37,10 +65,15 @@ export default function OpiroModel({ position = [-4, 0, 0] as [number, number, n
     <Float floatIntensity={0.5} rotationIntensity={0.2} position={position}>
       <group
         ref={groupRef}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onPointerOver={() => {
+          setHovered(true);
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          document.body.style.cursor = "auto";
+        }}
         onClick={handleClick}
-        scale={hovered ? 1.1 : 1}
       >
         {/* Vinyl disc */}
         <mesh rotation={[Math.PI / 2, 0, 0]}>
@@ -78,7 +111,7 @@ export default function OpiroModel({ position = [-4, 0, 0] as [number, number, n
             transparent
             opacity={0.4}
             emissive="#8B5CF6"
-            emissiveIntensity={hovered ? 0.8 : 0.3}
+            emissiveIntensity={0.3}
           />
         </mesh>
         <mesh ref={wave2Ref} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
@@ -88,7 +121,7 @@ export default function OpiroModel({ position = [-4, 0, 0] as [number, number, n
             transparent
             opacity={0.25}
             emissive="#8B5CF6"
-            emissiveIntensity={hovered ? 0.6 : 0.2}
+            emissiveIntensity={0.2}
           />
         </mesh>
         <mesh ref={wave3Ref} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
@@ -98,7 +131,7 @@ export default function OpiroModel({ position = [-4, 0, 0] as [number, number, n
             transparent
             opacity={0.15}
             emissive="#8B5CF6"
-            emissiveIntensity={hovered ? 0.4 : 0.1}
+            emissiveIntensity={0.1}
           />
         </mesh>
       </group>

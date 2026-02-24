@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { navLinks, siteConfig } from "@/lib/constants";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import MobileMenu from "@/components/ui/MobileMenu";
@@ -8,12 +8,65 @@ import MobileMenu from "@/components/ui/MobileMenu";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const navRef = useRef<HTMLElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // IntersectionObserver to track active section
+  useEffect(() => {
+    const sections = document.querySelectorAll("section[id]");
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-50% 0px -50% 0px" }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  // Update sliding indicator position
+  const updateIndicator = useCallback(() => {
+    if (!navRef.current || !indicatorRef.current) return;
+
+    // Find active link matching current section
+    const activeLink = navRef.current.querySelector(
+      `a[href="#${activeSection}"]`
+    ) as HTMLElement | null;
+
+    if (activeLink) {
+      const navRect = navRef.current.getBoundingClientRect();
+      const linkRect = activeLink.getBoundingClientRect();
+      indicatorRef.current.style.left = `${linkRect.left - navRect.left}px`;
+      indicatorRef.current.style.width = `${linkRect.width}px`;
+      indicatorRef.current.style.opacity = "1";
+    } else {
+      indicatorRef.current.style.opacity = "0";
+    }
+  }, [activeSection]);
+
+  useEffect(() => {
+    updateIndicator();
+  }, [activeSection, updateIndicator]);
+
+  // Also update on resize
+  useEffect(() => {
+    window.addEventListener("resize", updateIndicator);
+    return () => window.removeEventListener("resize", updateIndicator);
+  }, [updateIndicator]);
 
   return (
     <>
@@ -29,16 +82,27 @@ export default function Navbar() {
             {siteConfig.name}
           </a>
 
-          <nav className="hidden items-center gap-1 md:flex">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {link.label}
-              </a>
-            ))}
+          <nav ref={navRef} className="relative hidden items-center gap-1 md:flex">
+            {navLinks.map((link) => {
+              const isHash = link.href.startsWith("#");
+              const sectionId = isHash ? link.href.slice(1) : "";
+              const isActive = isHash && activeSection === sectionId;
+
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    isActive
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
+            <div ref={indicatorRef} className="nav-indicator" style={{ opacity: 0 }} />
             <div className="ml-2">
               <ThemeToggle />
             </div>

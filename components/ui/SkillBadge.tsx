@@ -14,7 +14,7 @@ const categoryColors: Record<string, string> = {
 export default function SkillBadge({ skill }: SkillBadgeProps) {
   return (
     <div
-      className={`rounded-lg border px-4 py-3 text-center text-sm font-medium transition-transform hover:scale-105 ${
+      className={`glow-card rounded-lg border px-4 py-3 text-center text-sm font-medium ${
         categoryColors[skill.category] || "border-border bg-card"
       }`}
     >

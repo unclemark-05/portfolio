@@ -3,10 +3,11 @@
 import { useEffect, useRef } from "react";
 import { skills, skillCategories } from "@/lib/constants";
 import SkillBadge from "@/components/ui/SkillBadge";
-import { scrollStaggerFadeIn } from "@/lib/animations";
+import { scrollStaggerFadeIn, scrollCharReveal } from "@/lib/animations";
 
 export default function SkillsSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (sectionRef.current) {
@@ -15,6 +16,9 @@ export default function SkillsSection() {
         ".skill-item",
         { stagger: 0.05 }
       );
+    }
+    if (headingRef.current) {
+      scrollCharReveal(headingRef.current);
     }
   }, []);
 
@@ -25,7 +29,9 @@ export default function SkillsSection() {
           <p className="mb-2 text-sm font-medium uppercase tracking-widest text-primary">
             Skills
           </p>
-          <h2 className="text-3xl font-bold sm:text-4xl">Tech stack</h2>
+          <div className="overflow-hidden">
+            <h2 ref={headingRef} className="text-3xl font-bold sm:text-4xl">Tech stack</h2>
+          </div>
           <p className="mx-auto mt-3 max-w-lg text-muted-foreground">
             Technologies and tools I use to bring ideas to life.
           </p>

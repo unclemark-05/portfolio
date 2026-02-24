@@ -2,10 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { stats } from "@/lib/constants";
-import { scrollFadeInUp, scrollSlideIn } from "@/lib/animations";
+import { scrollFadeInUp, scrollSlideIn, scrollCountUp } from "@/lib/animations";
 
 export default function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const statRefs = useRef<(HTMLParagraphElement | null)[]>([]);
 
   useEffect(() => {
     if (!sectionRef.current) return;
@@ -13,6 +14,11 @@ export default function AboutSection() {
     const text = sectionRef.current.querySelector(".about-text");
     if (photo) scrollSlideIn(photo, "left", { trigger: photo });
     if (text) scrollFadeInUp(text, { trigger: text });
+
+    // Count-up animation for stat values
+    statRefs.current.forEach((el) => {
+      if (el) scrollCountUp(el);
+    });
   }, []);
 
   return (
@@ -65,12 +71,17 @@ export default function AboutSection() {
 
             {/* Stats */}
             <div className="mt-8 grid grid-cols-3 gap-4">
-              {stats.map((stat) => (
+              {stats.map((stat, i) => (
                 <div
                   key={stat.label}
                   className="rounded-lg border border-border bg-card p-4 text-center"
                 >
-                  <p className="text-2xl font-bold text-primary">{stat.value}</p>
+                  <p
+                    ref={(el) => { statRefs.current[i] = el; }}
+                    className="text-2xl font-bold text-primary"
+                  >
+                    {stat.value}
+                  </p>
                   <p className="mt-1 text-xs text-muted-foreground">
                     {stat.label}
                   </p>

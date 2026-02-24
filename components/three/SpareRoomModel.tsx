@@ -9,6 +9,7 @@ export default function SpareRoomModel({ position = [4, 0, 0] as [number, number
   const groupRef = useRef<THREE.Group>(null);
   const keyRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
+  const targetScale = useRef(1);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
@@ -16,8 +17,16 @@ export default function SpareRoomModel({ position = [4, 0, 0] as [number, number
       keyRef.current.position.y = 1.5 + Math.sin(t * 2) * 0.15;
       keyRef.current.rotation.z = Math.sin(t * 1.5) * 0.3;
     }
-    if (groupRef.current && hovered) {
-      groupRef.current.rotation.y = Math.sin(t) * 0.15;
+    if (groupRef.current) {
+      // Gentle sine-wave idle rotation
+      groupRef.current.rotation.y = Math.sin(t * 0.3) * 0.15;
+
+      // Smooth scale lerp
+      targetScale.current = hovered ? 1.1 : 1;
+      groupRef.current.scale.lerp(
+        new THREE.Vector3(targetScale.current, targetScale.current, targetScale.current),
+        0.1
+      );
     }
   });
 
@@ -30,10 +39,15 @@ export default function SpareRoomModel({ position = [4, 0, 0] as [number, number
     <Float floatIntensity={0.5} rotationIntensity={0.2} position={position}>
       <group
         ref={groupRef}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onPointerOver={() => {
+          setHovered(true);
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          document.body.style.cursor = "auto";
+        }}
         onClick={handleClick}
-        scale={hovered ? 1.1 : 1}
       >
         {/* House body */}
         <mesh position={[0, 0, 0]}>

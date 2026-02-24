@@ -3,16 +3,20 @@
 import { useEffect, useRef } from "react";
 import { testimonials } from "@/lib/constants";
 import TestimonialCard from "@/components/ui/TestimonialCard";
-import { scrollStaggerFadeIn } from "@/lib/animations";
+import { scrollStaggerFadeIn, scrollCharReveal } from "@/lib/animations";
 
 export default function TestimonialsSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (sectionRef.current) {
       scrollStaggerFadeIn(sectionRef.current, ".testimonial-item", {
         stagger: 0.15,
       });
+    }
+    if (headingRef.current) {
+      scrollCharReveal(headingRef.current);
     }
   }, []);
 
@@ -23,9 +27,11 @@ export default function TestimonialsSection() {
           <p className="mb-2 text-sm font-medium uppercase tracking-widest text-primary">
             Testimonials
           </p>
-          <h2 className="text-3xl font-bold sm:text-4xl">
-            What people say
-          </h2>
+          <div className="overflow-hidden">
+            <h2 ref={headingRef} className="text-3xl font-bold sm:text-4xl">
+              What people say
+            </h2>
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">

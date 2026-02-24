@@ -9,6 +9,7 @@ export default function ScriptureModel({ position = [0, 0, 0] as [number, number
   const groupRef = useRef<THREE.Group>(null);
   const crossRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
+  const targetScale = useRef(1);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
@@ -16,7 +17,15 @@ export default function ScriptureModel({ position = [0, 0, 0] as [number, number
       crossRef.current.position.y = 1.2 + Math.sin(t * 1.5) * 0.1;
     }
     if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(t * 0.5) * 0.1;
+      // Gentle sine-wave idle
+      groupRef.current.rotation.y = Math.sin(t * 0.3) * 0.15;
+
+      // Smooth scale lerp
+      targetScale.current = hovered ? 1.1 : 1;
+      groupRef.current.scale.lerp(
+        new THREE.Vector3(targetScale.current, targetScale.current, targetScale.current),
+        0.1
+      );
     }
   });
 
@@ -29,10 +38,15 @@ export default function ScriptureModel({ position = [0, 0, 0] as [number, number
     <Float floatIntensity={0.4} rotationIntensity={0.15} position={position}>
       <group
         ref={groupRef}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onPointerOver={() => {
+          setHovered(true);
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          document.body.style.cursor = "auto";
+        }}
         onClick={handleClick}
-        scale={hovered ? 1.1 : 1}
       >
         {/* Left page */}
         <RoundedBox

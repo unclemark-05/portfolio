@@ -41,14 +41,24 @@
   --accent: #3B82F6;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans, Arial, Helvetica, sans-serif);
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 /* Custom scrollbar */
@@ -72,4 +82,114 @@ body {
 /* Canvas container */
 .canvas-container canvas {
   outline: none;
+}
+
+/* Glow card hover effect */
+.glow-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glow-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.1);
+}
+
+/* Animated gradient background */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* CTA button pulse glow */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+  50% { box-shadow: 0 0 20px 8px rgba(139, 92, 246, 0.15); }
+}
+
+.btn-pulse {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Custom cursor */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  transition: width 0.2s ease, height 0.2s ease, background 0.2s ease;
+}
+
+.cursor-dot.hovering {
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  border: 2px solid var(--primary);
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--primary);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.5;
+  mix-blend-mode: difference;
+  transition: opacity 0.2s ease;
+}
+
+.cursor-ring.hovering {
+  opacity: 0;
+}
+
+/* Hide default cursor when custom cursor is active (desktop only) */
+@media (hover: hover) {
+  .custom-cursor-active * {
+    cursor: none !important;
+  }
+}
+
+/* Nav indicator */
+.nav-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 1px;
+  transition: left 0.3s ease, width 0.3s ease;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .glow-card:hover {
+    transform: none;
+  }
+
+  .animated-gradient {
+    animation: none;
+  }
+
+  .btn-pulse {
+    animation: none;
+  }
+
+  .cursor-dot,
+  .cursor-ring {
+    display: none !important;
+  }
 }

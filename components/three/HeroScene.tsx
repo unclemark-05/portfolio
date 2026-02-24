@@ -1,12 +1,38 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Preload } from "@react-three/drei";
-import { Suspense } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Preload } from "@react-three/drei";
+import { Suspense, useEffect, useRef } from "react";
 import OpiroModel from "./OpiroModel";
 import ScriptureModel from "./ScriptureModel";
 import SpareRoomModel from "./SpareRoomModel";
 import FloatingParticles from "./FloatingParticles";
+
+function MouseParallaxRig() {
+  const { camera } = useThree();
+  const mouse = useRef({ x: 0, y: 0 });
+  const smoothed = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    return () => window.removeEventListener("mousemove", onMouseMove);
+  }, []);
+
+  useFrame(() => {
+    smoothed.current.x += (mouse.current.x - smoothed.current.x) * 0.05;
+    smoothed.current.y += (mouse.current.y - smoothed.current.y) * 0.05;
+
+    camera.position.x = smoothed.current.x * 1.5;
+    camera.position.y = smoothed.current.y * 0.8;
+    camera.lookAt(0, 0, 0);
+  });
+
+  return null;
+}
 
 export default function HeroScene() {
   return (
@@ -29,14 +55,7 @@ export default function HeroScene() {
           <Preload all />
         </Suspense>
 
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          autoRotate
-          autoRotateSpeed={0.3}
-          maxPolarAngle={Math.PI / 1.8}
-          minPolarAngle={Math.PI / 2.5}
-        />
+        <MouseParallaxRig />
       </Canvas>
     </div>
   );
