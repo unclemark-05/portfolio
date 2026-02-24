@@ -5,23 +5,19 @@ import { useFrame } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
 import * as THREE from "three";
 
+// Developer-themed: Gear / Settings icon
 export default function SpareRoomModel({ position = [4, 0, 0] as [number, number, number] }) {
   const groupRef = useRef<THREE.Group>(null);
-  const keyRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const targetScale = useRef(1);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
-    if (keyRef.current) {
-      keyRef.current.position.y = 1.5 + Math.sin(t * 2) * 0.15;
-      keyRef.current.rotation.z = Math.sin(t * 1.5) * 0.3;
-    }
-    if (groupRef.current) {
-      // Gentle sine-wave idle rotation
-      groupRef.current.rotation.y = Math.sin(t * 0.3) * 0.15;
 
-      // Smooth scale lerp
+    if (groupRef.current) {
+      // Slow constant rotation for gear
+      groupRef.current.rotation.z = t * 0.2;
+
       targetScale.current = hovered ? 1.1 : 1;
       groupRef.current.scale.lerp(
         new THREE.Vector3(targetScale.current, targetScale.current, targetScale.current),
@@ -34,6 +30,17 @@ export default function SpareRoomModel({ position = [4, 0, 0] as [number, number
     const el = document.getElementById("projects");
     el?.scrollIntoView({ behavior: "smooth" });
   };
+
+  // Create gear teeth positions
+  const teethCount = 8;
+  const teeth = Array.from({ length: teethCount }, (_, i) => {
+    const angle = (i / teethCount) * Math.PI * 2;
+    return {
+      x: Math.cos(angle) * 1.1,
+      y: Math.sin(angle) * 1.1,
+      rotation: angle,
+    };
+  });
 
   return (
     <Float floatIntensity={0.5} rotationIntensity={0.2} position={position}>
@@ -49,84 +56,63 @@ export default function SpareRoomModel({ position = [4, 0, 0] as [number, number
         }}
         onClick={handleClick}
       >
-        {/* House body */}
-        <mesh position={[0, 0, 0]}>
-          <boxGeometry args={[1.6, 1.2, 1.2]} />
-          <meshStandardMaterial color="#3B82F6" roughness={0.4} />
-        </mesh>
-
-        {/* Roof */}
-        <mesh position={[0, 1, 0]} rotation={[0, Math.PI / 4, 0]}>
-          <coneGeometry args={[1.3, 0.8, 4]} />
-          <meshStandardMaterial color="#1E40AF" roughness={0.5} />
-        </mesh>
-
-        {/* Door */}
-        <mesh position={[0, -0.2, 0.61]}>
-          <boxGeometry args={[0.35, 0.6, 0.02]} />
-          <meshStandardMaterial color="#1E3A5F" roughness={0.6} />
-        </mesh>
-
-        {/* Door handle */}
-        <mesh position={[0.1, -0.2, 0.63]}>
-          <sphereGeometry args={[0.03, 8, 8]} />
-          <meshStandardMaterial color="#D4AF37" metalness={0.8} />
-        </mesh>
-
-        {/* Windows */}
-        <mesh position={[-0.45, 0.15, 0.61]}>
-          <boxGeometry args={[0.3, 0.3, 0.02]} />
+        {/* Outer ring */}
+        <mesh>
+          <torusGeometry args={[0.9, 0.18, 16, 64]} />
           <meshStandardMaterial
-            color="#87CEEB"
-            emissive="#87CEEB"
-            emissiveIntensity={hovered ? 0.3 : 0.1}
-            transparent
-            opacity={0.8}
-          />
-        </mesh>
-        <mesh position={[0.45, 0.15, 0.61]}>
-          <boxGeometry args={[0.3, 0.3, 0.02]} />
-          <meshStandardMaterial
-            color="#87CEEB"
-            emissive="#87CEEB"
-            emissiveIntensity={hovered ? 0.3 : 0.1}
-            transparent
-            opacity={0.8}
+            color="#3B82F6"
+            emissive="#3B82F6"
+            emissiveIntensity={hovered ? 0.6 : 0.3}
+            metalness={0.7}
+            roughness={0.25}
           />
         </mesh>
 
-        {/* Key */}
-        <group ref={keyRef} position={[0.9, 1.5, 0]}>
-          {/* Key ring */}
-          <mesh>
-            <torusGeometry args={[0.15, 0.025, 16, 32]} />
+        {/* Gear teeth */}
+        {teeth.map((tooth, i) => (
+          <mesh key={i} position={[tooth.x, tooth.y, 0]} rotation={[0, 0, tooth.rotation]}>
+            <boxGeometry args={[0.3, 0.25, 0.18]} />
             <meshStandardMaterial
-              color="#D4AF37"
-              metalness={0.8}
-              roughness={0.2}
-              emissive="#D4AF37"
-              emissiveIntensity={hovered ? 0.4 : 0.1}
+              color="#3B82F6"
+              emissive="#3B82F6"
+              emissiveIntensity={hovered ? 0.6 : 0.3}
+              metalness={0.7}
+              roughness={0.25}
             />
           </mesh>
-          {/* Key shaft */}
-          <mesh position={[0, -0.3, 0]}>
-            <cylinderGeometry args={[0.02, 0.02, 0.35, 8]} />
-            <meshStandardMaterial
-              color="#D4AF37"
-              metalness={0.8}
-              roughness={0.2}
-            />
-          </mesh>
-          {/* Key teeth */}
-          <mesh position={[-0.04, -0.45, 0]}>
-            <boxGeometry args={[0.06, 0.08, 0.02]} />
-            <meshStandardMaterial color="#D4AF37" metalness={0.8} />
-          </mesh>
-          <mesh position={[-0.04, -0.38, 0]}>
-            <boxGeometry args={[0.04, 0.06, 0.02]} />
-            <meshStandardMaterial color="#D4AF37" metalness={0.8} />
-          </mesh>
-        </group>
+        ))}
+
+        {/* Inner circle */}
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.45, 0.45, 0.2, 32]} />
+          <meshStandardMaterial
+            color="#1e3a5f"
+            emissive="#3B82F6"
+            emissiveIntensity={hovered ? 0.4 : 0.15}
+            metalness={0.8}
+            roughness={0.2}
+          />
+        </mesh>
+
+        {/* Center hole */}
+        <mesh>
+          <torusGeometry args={[0.25, 0.06, 16, 32]} />
+          <meshStandardMaterial
+            color="#8B5CF6"
+            emissive="#8B5CF6"
+            emissiveIntensity={hovered ? 0.8 : 0.4}
+            metalness={0.6}
+            roughness={0.3}
+          />
+        </mesh>
+
+        {/* Glow */}
+        <pointLight
+          position={[0, 0, 1]}
+          intensity={hovered ? 0.5 : 0.15}
+          color="#3B82F6"
+          distance={4}
+        />
       </group>
     </Float>
   );

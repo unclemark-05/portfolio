@@ -2,40 +2,22 @@
 
 import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Float } from "@react-three/drei";
+import { Float, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 
+// Developer-themed: Floating Laptop
 export default function OpiroModel({ position = [-4, 0, 0] as [number, number, number] }) {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
-  const wave1Ref = useRef<THREE.Mesh>(null);
-  const wave2Ref = useRef<THREE.Mesh>(null);
-  const wave3Ref = useRef<THREE.Mesh>(null);
-
-  // Smooth scale and emissive targets
   const targetScale = useRef(1);
-  const currentEmissive = useRef(0.3);
-  const targetEmissive = useRef(0.3);
+  const screenGlow = useRef(0.3);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
 
-    // Wave pulsing
-    if (wave1Ref.current) {
-      wave1Ref.current.scale.setScalar(1 + Math.sin(t * 2) * 0.1);
-    }
-    if (wave2Ref.current) {
-      wave2Ref.current.scale.setScalar(1 + Math.sin(t * 2 + 1) * 0.1);
-    }
-    if (wave3Ref.current) {
-      wave3Ref.current.scale.setScalar(1 + Math.sin(t * 2 + 2) * 0.1);
-    }
-
-    // Gentle sine-wave idle rotation instead of constant increment
     if (groupRef.current) {
       groupRef.current.rotation.y = Math.sin(t * 0.3) * 0.15;
 
-      // Smooth scale lerp
       targetScale.current = hovered ? 1.1 : 1;
       groupRef.current.scale.lerp(
         new THREE.Vector3(targetScale.current, targetScale.current, targetScale.current),
@@ -43,17 +25,9 @@ export default function OpiroModel({ position = [-4, 0, 0] as [number, number, n
       );
     }
 
-    // Smooth emissive intensity lerp
-    targetEmissive.current = hovered ? 1.5 : 0.6;
-    currentEmissive.current += (targetEmissive.current - currentEmissive.current) * 0.1;
-
-    // Apply emissive to wave materials
-    [wave1Ref, wave2Ref, wave3Ref].forEach((ref) => {
-      if (ref.current) {
-        const mat = (ref.current as THREE.Mesh).material as THREE.MeshStandardMaterial;
-        if (mat) mat.emissiveIntensity = currentEmissive.current;
-      }
-    });
+    // Smooth screen glow
+    const target = hovered ? 0.8 : 0.3;
+    screenGlow.current += (target - screenGlow.current) * 0.1;
   });
 
   const handleClick = () => {
@@ -74,76 +48,64 @@ export default function OpiroModel({ position = [-4, 0, 0] as [number, number, n
           document.body.style.cursor = "auto";
         }}
         onClick={handleClick}
+        rotation={[0.2, 0, 0]}
       >
-        {/* Vinyl disc */}
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[1.2, 1.2, 0.05, 64]} />
-          <meshStandardMaterial
-            color="#2d2d4e"
-            emissive="#8B5CF6"
-            emissiveIntensity={0.15}
-            metalness={0.7}
-            roughness={0.25}
-          />
+        {/* Laptop base */}
+        <RoundedBox args={[2, 0.08, 1.4]} radius={0.03} position={[0, -0.5, 0]}>
+          <meshStandardMaterial color="#2a2a3e" metalness={0.8} roughness={0.2} />
+        </RoundedBox>
+
+        {/* Keyboard area */}
+        <mesh position={[0, -0.44, 0]}>
+          <boxGeometry args={[1.7, 0.01, 1.1]} />
+          <meshStandardMaterial color="#1a1a2e" roughness={0.6} />
         </mesh>
 
-        {/* Center label */}
-        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
-          <cylinderGeometry args={[0.35, 0.35, 0.02, 32]} />
-          <meshStandardMaterial
-            color="#8B5CF6"
-            emissive="#8B5CF6"
-            emissiveIntensity={0.4}
-            metalness={0.5}
-            roughness={0.3}
-          />
+        {/* Trackpad */}
+        <mesh position={[0, -0.43, 0.3]}>
+          <boxGeometry args={[0.5, 0.01, 0.35]} />
+          <meshStandardMaterial color="#252540" roughness={0.4} />
         </mesh>
 
-        {/* Groove rings */}
-        {[0.5, 0.7, 0.9, 1.05].map((radius, i) => (
-          <mesh key={i} rotation={[Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
-            <torusGeometry args={[radius, 0.01, 8, 64]} />
+        {/* Screen (angled up) */}
+        <group position={[0, 0.15, -0.65]} rotation={[-0.3, 0, 0]}>
+          {/* Screen bezel */}
+          <RoundedBox args={[2, 1.3, 0.06]} radius={0.03}>
+            <meshStandardMaterial color="#2a2a3e" metalness={0.8} roughness={0.2} />
+          </RoundedBox>
+
+          {/* Screen display */}
+          <mesh position={[0, 0, 0.035]}>
+            <boxGeometry args={[1.75, 1.1, 0.01]} />
             <meshStandardMaterial
-              color="#8B5CF6"
+              color="#0f172a"
               emissive="#8B5CF6"
-              emissiveIntensity={0.2}
-              metalness={0.8}
-              roughness={0.15}
+              emissiveIntensity={screenGlow.current}
             />
           </mesh>
-        ))}
 
-        {/* Sound waves */}
-        <mesh ref={wave1Ref} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[1.5, 0.02, 8, 64]} />
-          <meshStandardMaterial
-            color="#8B5CF6"
-            transparent
-            opacity={0.6}
-            emissive="#8B5CF6"
-            emissiveIntensity={0.6}
-          />
-        </mesh>
-        <mesh ref={wave2Ref} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[1.8, 0.02, 8, 64]} />
-          <meshStandardMaterial
-            color="#8B5CF6"
-            transparent
-            opacity={0.4}
-            emissive="#8B5CF6"
-            emissiveIntensity={0.5}
-          />
-        </mesh>
-        <mesh ref={wave3Ref} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[2.1, 0.015, 8, 64]} />
-          <meshStandardMaterial
-            color="#8B5CF6"
-            transparent
-            opacity={0.3}
-            emissive="#8B5CF6"
-            emissiveIntensity={0.4}
-          />
-        </mesh>
+          {/* Code lines on screen */}
+          {[-0.35, -0.2, -0.05, 0.1, 0.25].map((y, i) => (
+            <mesh key={i} position={[-0.3 + i * 0.05, y, 0.04]}>
+              <boxGeometry args={[0.6 + (i % 3) * 0.2, 0.04, 0.005]} />
+              <meshStandardMaterial
+                color={i % 2 === 0 ? "#8B5CF6" : "#3B82F6"}
+                emissive={i % 2 === 0 ? "#8B5CF6" : "#3B82F6"}
+                emissiveIntensity={0.5}
+                transparent
+                opacity={0.7}
+              />
+            </mesh>
+          ))}
+        </group>
+
+        {/* Screen hinge glow */}
+        <pointLight
+          position={[0, -0.1, -0.5]}
+          intensity={hovered ? 0.5 : 0.2}
+          color="#8B5CF6"
+          distance={3}
+        />
       </group>
     </Float>
   );

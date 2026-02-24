@@ -123,13 +123,13 @@ export default function HeroSection() {
           {isMobile ? (
             <div className="flex h-full items-center justify-center gap-6">
               <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-violet-500/10 text-3xl">
-                🎵
+                💻
               </div>
               <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-amber-500/10 text-3xl">
-                📖
+                &lt;/&gt;
               </div>
               <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-500/10 text-3xl">
-                🏠
+                ⚙️
               </div>
             </div>
           ) : (

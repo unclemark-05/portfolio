@@ -2,25 +2,21 @@
 
 import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Float, RoundedBox } from "@react-three/drei";
+import { Float } from "@react-three/drei";
 import * as THREE from "three";
 
+// Developer-themed: Code Brackets < / >
 export default function ScriptureModel({ position = [0, 0, 0] as [number, number, number] }) {
   const groupRef = useRef<THREE.Group>(null);
-  const crossRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const targetScale = useRef(1);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
-    if (crossRef.current) {
-      crossRef.current.position.y = 1.2 + Math.sin(t * 1.5) * 0.1;
-    }
+
     if (groupRef.current) {
-      // Gentle sine-wave idle
       groupRef.current.rotation.y = Math.sin(t * 0.3) * 0.15;
 
-      // Smooth scale lerp
       targetScale.current = hovered ? 1.1 : 1;
       groupRef.current.scale.lerp(
         new THREE.Vector3(targetScale.current, targetScale.current, targetScale.current),
@@ -48,70 +44,77 @@ export default function ScriptureModel({ position = [0, 0, 0] as [number, number
         }}
         onClick={handleClick}
       >
-        {/* Left page */}
-        <RoundedBox
-          args={[0.9, 1.2, 0.05]}
-          radius={0.02}
-          position={[-0.5, 0, 0.1]}
-          rotation={[0, 0.2, 0]}
-        >
-          <meshStandardMaterial color="#FFF8E7" roughness={0.8} />
-        </RoundedBox>
-
-        {/* Right page */}
-        <RoundedBox
-          args={[0.9, 1.2, 0.05]}
-          radius={0.02}
-          position={[0.5, 0, 0.1]}
-          rotation={[0, -0.2, 0]}
-        >
-          <meshStandardMaterial color="#FFF8E7" roughness={0.8} />
-        </RoundedBox>
-
-        {/* Book spine */}
-        <mesh position={[0, 0, -0.02]}>
-          <boxGeometry args={[0.15, 1.25, 0.12]} />
-          <meshStandardMaterial color="#8B4513" roughness={0.6} />
-        </mesh>
-
-        {/* Cross */}
-        <group ref={crossRef} position={[0, 1.2, 0]}>
-          {/* Vertical beam */}
-          <mesh>
-            <boxGeometry args={[0.08, 0.6, 0.08]} />
+        {/* Left bracket < */}
+        <group position={[-1, 0, 0]}>
+          {/* Top arm */}
+          <mesh position={[0.15, 0.4, 0]} rotation={[0, 0, 0.5]}>
+            <boxGeometry args={[1, 0.15, 0.15]} />
             <meshStandardMaterial
-              color="#D4AF37"
-              emissive="#D4AF37"
-              emissiveIntensity={hovered ? 0.8 : 0.3}
-              metalness={0.7}
-              roughness={0.2}
+              color="#8B5CF6"
+              emissive="#8B5CF6"
+              emissiveIntensity={hovered ? 0.8 : 0.4}
+              metalness={0.6}
+              roughness={0.3}
             />
           </mesh>
-          {/* Horizontal beam */}
-          <mesh position={[0, 0.12, 0]}>
-            <boxGeometry args={[0.4, 0.08, 0.08]} />
+          {/* Bottom arm */}
+          <mesh position={[0.15, -0.4, 0]} rotation={[0, 0, -0.5]}>
+            <boxGeometry args={[1, 0.15, 0.15]} />
             <meshStandardMaterial
-              color="#D4AF37"
-              emissive="#D4AF37"
-              emissiveIntensity={hovered ? 0.8 : 0.3}
-              metalness={0.7}
-              roughness={0.2}
+              color="#8B5CF6"
+              emissive="#8B5CF6"
+              emissiveIntensity={hovered ? 0.8 : 0.4}
+              metalness={0.6}
+              roughness={0.3}
             />
           </mesh>
         </group>
 
-        {/* Light rays (subtle cone) */}
-        <mesh position={[0, 2, 0]} rotation={[Math.PI, 0, 0]}>
-          <coneGeometry args={[0.8, 1.5, 16, 1, true]} />
+        {/* Slash / */}
+        <mesh position={[0, 0, 0]} rotation={[0, 0, 0.3]}>
+          <boxGeometry args={[0.15, 1.8, 0.15]} />
           <meshStandardMaterial
-            color="#D4AF37"
-            transparent
-            opacity={hovered ? 0.15 : 0.07}
-            side={THREE.DoubleSide}
-            emissive="#D4AF37"
-            emissiveIntensity={0.2}
+            color="#3B82F6"
+            emissive="#3B82F6"
+            emissiveIntensity={hovered ? 0.6 : 0.3}
+            metalness={0.6}
+            roughness={0.3}
           />
         </mesh>
+
+        {/* Right bracket > */}
+        <group position={[1, 0, 0]}>
+          {/* Top arm */}
+          <mesh position={[-0.15, 0.4, 0]} rotation={[0, 0, -0.5]}>
+            <boxGeometry args={[1, 0.15, 0.15]} />
+            <meshStandardMaterial
+              color="#8B5CF6"
+              emissive="#8B5CF6"
+              emissiveIntensity={hovered ? 0.8 : 0.4}
+              metalness={0.6}
+              roughness={0.3}
+            />
+          </mesh>
+          {/* Bottom arm */}
+          <mesh position={[-0.15, -0.4, 0]} rotation={[0, 0, 0.5]}>
+            <boxGeometry args={[1, 0.15, 0.15]} />
+            <meshStandardMaterial
+              color="#8B5CF6"
+              emissive="#8B5CF6"
+              emissiveIntensity={hovered ? 0.8 : 0.4}
+              metalness={0.6}
+              roughness={0.3}
+            />
+          </mesh>
+        </group>
+
+        {/* Glow */}
+        <pointLight
+          position={[0, 0, 1]}
+          intensity={hovered ? 0.6 : 0.2}
+          color="#8B5CF6"
+          distance={4}
+        />
       </group>
     </Float>
   );

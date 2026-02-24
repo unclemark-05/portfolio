@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { navLinks } from "@/lib/constants";
 import gsap from "gsap";
 
@@ -13,6 +14,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLElement>(null);
   const linksRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const overlay = overlayRef.current;
@@ -23,8 +25,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     const linkEls = links.querySelectorAll("a");
 
     if (isOpen) {
-      // Animate open
       gsap.set(overlay, { pointerEvents: "auto" });
+      gsap.set(panel, { pointerEvents: "auto" });
       gsap.to(overlay, { opacity: 1, duration: 0.3 });
       gsap.to(panel, { x: 0, duration: 0.4, ease: "power3.out" });
       gsap.fromTo(
@@ -33,45 +35,49 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         { opacity: 1, x: 0, duration: 0.3, stagger: 0.05, delay: 0.2 }
       );
     } else {
-      // Animate close
       gsap.to(panel, { x: "100%", duration: 0.3, ease: "power2.in" });
       gsap.to(overlay, {
         opacity: 0,
         duration: 0.3,
         onComplete: () => {
           gsap.set(overlay, { pointerEvents: "none" });
+          gsap.set(panel, { pointerEvents: "none" });
         },
       });
     }
   }, [isOpen]);
 
   const handleLinkClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // For hash links on the home page, handle scroll manually
-    const isHashLink = href.startsWith("/#");
+    e.preventDefault();
+    onClose();
 
-    if (isHashLink && window.location.pathname === "/") {
-      e.preventDefault();
-      const sectionId = href.slice(2);
-      onClose();
-      // Wait for menu close animation, then scroll
-      setTimeout(() => {
+    const isHashLink = href.startsWith("/#");
+    const isOnHomePage = window.location.pathname === "/";
+
+    setTimeout(() => {
+      if (isHashLink && isOnHomePage) {
+        // Same page — just scroll to section
+        const sectionId = href.slice(2);
         const section = document.getElementById(sectionId);
         if (section) {
           section.scrollIntoView({ behavior: "smooth" });
         }
-      }, 350);
-    } else {
-      // For non-hash links or hash links from other pages, let browser navigate
-      onClose();
-    }
-  }, [onClose]);
+      } else if (isHashLink && !isOnHomePage) {
+        // Different page — navigate to home with hash
+        router.push(href);
+      } else {
+        // Regular page link (/blog, /contact)
+        router.push(href);
+      }
+    }, 400);
+  }, [onClose, router]);
 
   return (
-    <div className="fixed inset-0 z-40 md:hidden" style={{ pointerEvents: "none" }}>
+    <div className="fixed inset-0 z-40 md:hidden" style={{ pointerEvents: isOpen ? "auto" : "none" }}>
       <div
         ref={overlayRef}
         className="absolute inset-0 bg-black/60"
-        style={{ opacity: 0, pointerEvents: "none" }}
+        style={{ opacity: 0 }}
         onClick={onClose}
       />
       <nav
@@ -86,7 +92,6 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               href={link.href}
               onClick={(e) => handleLinkClick(e, link.href)}
               className="block rounded-lg px-4 py-3 text-lg font-medium transition-colors hover:bg-muted"
-              style={{ opacity: 0 }}
             >
               {link.label}
             </a>
