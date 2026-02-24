@@ -29,21 +29,14 @@ export default function AboutSection() {
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-12 md:grid-cols-2 md:items-center">
-          {/* Photo placeholder */}
+          {/* Profile photo */}
           <div className="about-photo opacity-0">
             <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20">
-              <div className="flex h-full items-center justify-center text-muted-foreground">
-                <div className="text-center">
-                  <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-primary">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
-                    </svg>
-                  </div>
-                  <p className="text-sm">Add your photo</p>
-                  <p className="text-xs text-muted-foreground/60">public/images/profile.jpg</p>
-                </div>
-              </div>
+              <img
+                src="/images/profile.jpg"
+                alt="Mosope Salami"
+                className="h-full w-full object-cover"
+              />
             </div>
           </div>
 

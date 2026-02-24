@@ -1,23 +1,22 @@
 export const siteConfig = {
-  name: "Your Name",
+  name: "Mosope Salami",
   title: "Full-Stack Developer",
   description:
     "I build web applications that solve real problems. Full-Stack Developer specializing in Next.js, React, and interactive 3D experiences.",
-  url: "https://yourportfolio.com",
+  url: "https://portfolio-sage-alpha-44.vercel.app",
   ogImage: "/og-image.png",
   links: {
-    github: "https://github.com/yourusername",
-    linkedin: "https://linkedin.com/in/yourusername",
-    twitter: "https://twitter.com/yourusername",
-    email: "mailto:your@email.com",
+    github: "https://github.com/unclemark-05",
+    linkedin: "https://linkedin.com/in/salami-mosope",
+    email: "mailto:mrmosalami@gmail.com",
   },
 };
 
 export const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Skills", href: "#skills" },
+  { label: "Home", href: "/#home" },
+  { label: "About", href: "/#about" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Skills", href: "/#skills" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];
@@ -162,5 +161,5 @@ export const testimonials: Testimonial[] = [
 export const stats = [
   { label: "Products Shipped", value: "3" },
   { label: "Users Served", value: "1000+" },
-  { label: "Years Experience", value: "3+" },
+  { label: "Years Experience", value: "5+" },
 ];

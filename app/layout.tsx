@@ -20,24 +20,24 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Your Name | Full-Stack Developer",
-    template: "%s | Your Name",
+    default: "Mosope Salami | Full-Stack Developer",
+    template: "%s | Mosope Salami",
   },
   description:
     "Full-Stack Developer specializing in Next.js, React, and interactive web experiences. Building web applications that solve real problems.",
   openGraph: {
-    title: "Your Name | Full-Stack Developer",
+    title: "Mosope Salami | Full-Stack Developer",
     description:
       "Full-Stack Developer specializing in Next.js, React, and interactive web experiences.",
-    url: "https://yourportfolio.com",
-    siteName: "Your Name Portfolio",
+    url: "https://portfolio-sage-alpha-44.vercel.app",
+    siteName: "Mosope Salami Portfolio",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Your Name | Full-Stack Developer",
+    title: "Mosope Salami | Full-Stack Developer",
     description:
       "Full-Stack Developer specializing in Next.js, React, and interactive web experiences.",
     images: ["/og-image.png"],

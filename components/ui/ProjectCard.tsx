@@ -62,20 +62,11 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
             className="aspect-video overflow-hidden rounded-xl"
             style={{ backgroundColor: `${project.color}15`, clipPath: "inset(100% 0% 0% 0%)" }}
           >
-            <div className="flex h-full items-center justify-center text-muted-foreground">
-              <div className="text-center">
-                <div
-                  className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-xl"
-                  style={{ backgroundColor: `${project.color}20` }}
-                >
-                  <span className="text-2xl font-bold" style={{ color: project.color }}>
-                    {project.name[0]}
-                  </span>
-                </div>
-                <p className="text-sm">Screenshot placeholder</p>
-                <p className="text-xs text-muted-foreground/60">{project.image}</p>
-              </div>
-            </div>
+            <img
+              src={project.image}
+              alt={`${project.name} screenshot`}
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
 

@@ -10,10 +10,10 @@ export default function Footer() {
           <div>
             <h3 className="mb-3 font-semibold">Quick Links</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#home" className="transition-colors hover:text-foreground">Home</a></li>
-              <li><a href="#about" className="transition-colors hover:text-foreground">About</a></li>
-              <li><a href="#projects" className="transition-colors hover:text-foreground">Projects</a></li>
-              <li><a href="#skills" className="transition-colors hover:text-foreground">Skills</a></li>
+              <li><a href="/#home" className="transition-colors hover:text-foreground">Home</a></li>
+              <li><a href="/#about" className="transition-colors hover:text-foreground">About</a></li>
+              <li><a href="/#projects" className="transition-colors hover:text-foreground">Projects</a></li>
+              <li><a href="/#skills" className="transition-colors hover:text-foreground">Skills</a></li>
               <li><a href="/blog" className="transition-colors hover:text-foreground">Blog</a></li>
             </ul>
           </div>
@@ -47,11 +47,6 @@ export default function Footer() {
               <li>
                 <a href={siteConfig.links.linkedin} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-foreground">
                   LinkedIn
-                </a>
-              </li>
-              <li>
-                <a href={siteConfig.links.twitter} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-foreground">
-                  Twitter / X
                 </a>
               </li>
               <li>

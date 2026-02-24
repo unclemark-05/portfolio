@@ -44,7 +44,7 @@ export default function Navbar() {
 
     // Find active link matching current section
     const activeLink = navRef.current.querySelector(
-      `a[href="#${activeSection}"]`
+      `a[href="/#${activeSection}"]`
     ) as HTMLElement | null;
 
     if (activeLink) {
@@ -84,8 +84,8 @@ export default function Navbar() {
 
           <nav ref={navRef} className="relative hidden items-center gap-1 md:flex">
             {navLinks.map((link) => {
-              const isHash = link.href.startsWith("#");
-              const sectionId = isHash ? link.href.slice(1) : "";
+              const isHash = link.href.startsWith("/#");
+              const sectionId = isHash ? link.href.slice(2) : "";
               const isActive = isHash && activeSection === sectionId;
 
               return (

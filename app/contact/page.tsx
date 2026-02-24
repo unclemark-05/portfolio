@@ -35,7 +35,7 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <a href={siteConfig.links.email} className="text-sm text-muted-foreground hover:text-foreground">
-                  your@email.com
+                  mrmosalami@gmail.com
                 </a>
               </div>
               <div className="flex items-center gap-3">
