@@ -69,10 +69,10 @@ export default function Footer() {
           <button
             onClick={() => setMatrixActive(true)}
             disabled={matrixActive}
-            className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#8B5CF6] px-5 py-2 text-sm font-medium text-[#8B5CF6] transition-all hover:bg-[#8B5CF6] hover:text-white disabled:opacity-50"
+            className="group mt-6 inline-flex items-center gap-3 rounded-full border-2 border-[#8B5CF6] bg-[#8B5CF6]/10 px-8 py-4 text-base font-semibold text-[#8B5CF6] shadow-[0_0_20px_rgba(139,92,246,0.25)] transition-all duration-300 hover:scale-105 hover:bg-[#8B5CF6] hover:text-white hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] active:scale-95 disabled:opacity-50 btn-pulse"
           >
-            <span>M.S</span>
-            <span>&uarr;</span>
+            <span className="text-lg transition-transform duration-300 group-hover:-translate-y-1">&uarr;</span>
+            <span>Take Me Back Up</span>
           </button>
         </div>
       </div>
