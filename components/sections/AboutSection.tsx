@@ -31,7 +31,7 @@ export default function AboutSection() {
         <div className="grid gap-12 md:grid-cols-2 md:items-center">
           {/* Profile photo */}
           <div className="about-photo opacity-0">
-            <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20">
+            <div className="relative mx-auto w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20" style={{ aspectRatio: "3/4" }}>
               <img
                 src="/images/profile.jpg"
                 alt="Mosope Salami"
