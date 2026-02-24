@@ -1,7 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import { siteConfig, projects } from "@/lib/constants";
+import MatrixRain from "@/components/ui/MatrixRain";
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const [matrixActive, setMatrixActive] = useState(false);
 
   return (
     <footer className="border-t border-border bg-card">
@@ -61,8 +66,21 @@ export default function Footer() {
         <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
           <p>Built with Next.js, Three.js &amp; GSAP</p>
           <p className="mt-1">&copy; {year} M.S — {siteConfig.name}. All rights reserved.</p>
+          <button
+            onClick={() => setMatrixActive(true)}
+            disabled={matrixActive}
+            className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#8B5CF6] px-5 py-2 text-sm font-medium text-[#8B5CF6] transition-all hover:bg-[#8B5CF6] hover:text-white disabled:opacity-50"
+          >
+            <span>M.S</span>
+            <span>&uarr;</span>
+          </button>
         </div>
       </div>
+
+      <MatrixRain
+        active={matrixActive}
+        onComplete={() => setMatrixActive(false)}
+      />
     </footer>
   );
 }
