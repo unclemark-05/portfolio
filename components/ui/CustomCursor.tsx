@@ -8,13 +8,16 @@ export default function CustomCursor() {
   const mouse = useRef({ x: 0, y: 0 });
   const dotPos = useRef({ x: 0, y: 0 });
   const ringPos = useRef({ x: 0, y: 0 });
+  const ringScale = useRef(1);
   const hovering = useRef(false);
   const rafRef = useRef<number>(0);
 
   useEffect(() => {
     // Disable on touch devices or reduced motion
     const isTouch = window.matchMedia("(hover: none)").matches;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
     if (isTouch || reducedMotion) return;
 
     document.documentElement.classList.add("custom-cursor-active");
@@ -26,7 +29,7 @@ export default function CustomCursor() {
 
     const onMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target.closest("a, button, [data-magnetic]")) {
+      if (target.closest('a, button, [role="button"], [data-magnetic]')) {
         hovering.current = true;
         dotRef.current?.classList.add("hovering");
         ringRef.current?.classList.add("hovering");
@@ -35,7 +38,7 @@ export default function CustomCursor() {
 
     const onMouseOut = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target.closest("a, button, [data-magnetic]")) {
+      if (target.closest('a, button, [role="button"], [data-magnetic]')) {
         hovering.current = false;
         dotRef.current?.classList.remove("hovering");
         ringRef.current?.classList.remove("hovering");
@@ -47,15 +50,19 @@ export default function CustomCursor() {
       dotPos.current.x = mouse.current.x;
       dotPos.current.y = mouse.current.y;
 
-      // Ring lags behind
+      // Ring lags behind with lerp
       ringPos.current.x += (mouse.current.x - ringPos.current.x) * 0.15;
       ringPos.current.y += (mouse.current.y - ringPos.current.y) * 0.15;
+
+      // Smooth scale transition for ring
+      const targetScale = hovering.current ? 1.5 : 1;
+      ringScale.current += (targetScale - ringScale.current) * 0.15;
 
       if (dotRef.current) {
         dotRef.current.style.transform = `translate(${dotPos.current.x}px, ${dotPos.current.y}px) translate(-50%, -50%)`;
       }
       if (ringRef.current) {
-        ringRef.current.style.transform = `translate(${ringPos.current.x}px, ${ringPos.current.y}px) translate(-50%, -50%)`;
+        ringRef.current.style.transform = `translate(${ringPos.current.x}px, ${ringPos.current.y}px) translate(-50%, -50%) scale(${ringScale.current.toFixed(3)})`;
       }
 
       rafRef.current = requestAnimationFrame(animate);

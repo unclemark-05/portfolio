@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { navLinks, siteConfig } from "@/lib/constants";
+import { usePortfolioStore } from "@/lib/portfolioStore";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import MobileMenu from "@/components/ui/MobileMenu";
 
@@ -11,6 +12,12 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("home");
   const navRef = useRef<HTMLElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
+
+  const scrollDirection = usePortfolioStore((s) => s.scrollDirection);
+  const scrollProgress = usePortfolioStore((s) => s.scrollProgress);
+
+  // Hide navbar on scroll down when past hero, show on scroll up or near top
+  const navHidden = scrollDirection === "down" && scrollProgress > 0.05;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -72,6 +79,8 @@ export default function Navbar() {
     <>
       <header
         className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+          navHidden ? "-translate-y-full" : "translate-y-0"
+        } ${
           scrolled
             ? "border-b border-border bg-background/80 backdrop-blur-lg"
             : "bg-transparent"
