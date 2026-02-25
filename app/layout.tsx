@@ -7,7 +7,6 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollProgress from "@/components/ui/ScrollProgress";
 import ClientCursor from "@/components/ui/ClientCursor";
-import Preloader from "@/components/ui/Preloader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,7 +56,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>
-          <Preloader />
           <ClientCursor />
           <SmoothScrollProvider>
             <ScrollProgress />

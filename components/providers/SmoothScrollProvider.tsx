@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { setScrollProgress, setScrollDirection } from "@/lib/portfolioStore";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -27,12 +26,8 @@ export default function SmoothScrollProvider({
     });
     lenisRef.current = lenis;
 
-    // Bridge Lenis to GSAP ScrollTrigger + update store
-    lenis.on("scroll", () => {
-      ScrollTrigger.update();
-      setScrollProgress(lenis.progress ?? 0);
-      setScrollDirection(lenis.direction >= 0 ? "down" : "up");
-    });
+    // Bridge Lenis to GSAP ScrollTrigger
+    lenis.on("scroll", ScrollTrigger.update);
 
     // Use GSAP ticker for shared RAF loop
     gsap.ticker.add((time) => {

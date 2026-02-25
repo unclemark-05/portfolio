@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { siteConfig } from "@/lib/constants";
 import gsap from "gsap";
-import { usePortfolioStore } from "@/lib/portfolioStore";
+import TextScramble from "@/components/ui/TextScramble";
 
 const HeroScene = dynamic(() => import("@/components/three/HeroScene"), {
   ssr: false,
@@ -18,8 +18,6 @@ const HeroScene = dynamic(() => import("@/components/three/HeroScene"), {
 export default function HeroSection() {
   const textRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const preloaderDone = usePortfolioStore((s) => s.preloaderDone);
-  const animated = useRef(false);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -28,100 +26,57 @@ export default function HeroSection() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Master GSAP timeline — triggered when preloader finishes
   useEffect(() => {
-    if (!preloaderDone || !textRef.current || animated.current) return;
-    animated.current = true;
+    if (!textRef.current) return;
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mq.matches) {
-      textRef.current
-        .querySelectorAll(
-          ".hero-subtitle, .hero-char, .hero-desc, .hero-tech, .hero-buttons, .hero-scroll"
-        )
-        .forEach((el) => {
-          (el as HTMLElement).style.opacity = "1";
-          (el as HTMLElement).style.transform = "none";
-        });
+      // Just show everything immediately
+      textRef.current.querySelectorAll(".hero-subtitle, .hero-desc, .hero-tech, .hero-buttons").forEach((el) => {
+        (el as HTMLElement).style.opacity = "1";
+      });
       return;
     }
 
-    const tl = gsap.timeline({ delay: 0.15 });
+    const tl = gsap.timeline({ delay: 0.2 });
 
-    // 1. Tagline: tracking-in animation (letter-spacing wide→normal + fade)
+    // 1. Subtitle label: clip-path reveal from left
     tl.fromTo(
       ".hero-subtitle",
-      { letterSpacing: "0.5em", opacity: 0 },
-      { letterSpacing: "0.1em", opacity: 1, duration: 0.8, ease: "power2.out" }
+      { clipPath: "inset(0 100% 0 0)", opacity: 1 },
+      { clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "power2.inOut" }
     );
 
-    // 2. Name: each character clip-path reveal from bottom with stagger + scale overshoot
-    tl.fromTo(
-      ".hero-char",
-      { yPercent: 100, opacity: 0, scale: 1.2 },
-      {
-        yPercent: 0,
-        opacity: 1,
-        scale: 1,
-        stagger: 0.06,
-        duration: 0.5,
-        ease: "back.out(1.7)",
-      },
-      "-=0.3"
-    );
+    // 2. Name h1 is handled by TextScramble component (starts at 500ms delay)
 
-    // 3. Description: fade up
+    // 3. Description: fade-up
     tl.fromTo(
       ".hero-desc",
-      { opacity: 0, y: 20 },
+      { opacity: 0, y: 30 },
       { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-      "-=0.2"
+      "+=0.1"
     );
 
-    // 4. Tech stack: fade up
+    // 4. Tech stack line: fade-up
     tl.fromTo(
       ".hero-tech",
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-      "-=0.4"
-    );
-
-    // 5. Buttons: fade up
-    tl.fromTo(
-      ".hero-buttons",
-      { opacity: 0, y: 20 },
+      { opacity: 0, y: 30 },
       { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
       "-=0.3"
     );
 
-    // 6. Scroll indicator: fade in + infinite bounce
+    // 5. Buttons: fade-up
     tl.fromTo(
-      ".hero-scroll",
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+      ".hero-buttons",
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+      "-=0.3"
     );
-
-    tl.to(".hero-scroll", {
-      y: 8,
-      duration: 1.2,
-      ease: "sine.inOut",
-      repeat: -1,
-      yoyo: true,
-    });
 
     return () => {
       tl.kill();
     };
-  }, [preloaderDone]);
-
-  // Split name into characters for individual animation
-  const nameChars = siteConfig.name.split("").map((char, i) => (
-    <span key={i} className="char-reveal-wrapper">
-      <span className="char-reveal hero-char">
-        {char === " " ? "\u00A0" : char}
-      </span>
-    </span>
-  ));
+  }, []);
 
   return (
     <section
@@ -137,7 +92,7 @@ export default function HeroSection() {
             Full-Stack Developer
           </p>
           <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-            {nameChars}
+            <TextScramble text={siteConfig.name} delay={500} />
           </h1>
           <p className="hero-desc max-w-md text-lg text-muted-foreground opacity-0 sm:text-xl">
             I build web applications that solve real problems.
@@ -195,11 +150,11 @@ export default function HeroSection() {
       </div>
 
       {/* Scroll indicator */}
-      <div className="hero-scroll absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
         <div className="flex flex-col items-center gap-2 text-muted-foreground">
           <span className="text-xs">Scroll</span>
           <div className="h-6 w-4 rounded-full border-2 border-muted-foreground/50">
-            <div className="mx-auto mt-1 h-1.5 w-1 rounded-full bg-muted-foreground/50" />
+            <div className="mx-auto mt-1 h-1.5 w-1 animate-bounce rounded-full bg-muted-foreground/50" />
           </div>
         </div>
       </div>

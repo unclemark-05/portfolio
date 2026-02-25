@@ -11,8 +11,7 @@ import FloatingParticles from "./FloatingParticles";
 function MouseParallaxRig() {
   const { camera } = useThree();
   const mouse = useRef({ x: 0, y: 0 });
-  const target = useRef({ x: 0, y: 0 });
-  const velocity = useRef({ x: 0, y: 0 });
+  const smoothed = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
@@ -23,35 +22,12 @@ function MouseParallaxRig() {
     return () => window.removeEventListener("mousemove", onMouseMove);
   }, []);
 
-  useFrame((state) => {
-    const tx = mouse.current.x * 1.5;
-    const ty = mouse.current.y * 0.8;
+  useFrame(() => {
+    smoothed.current.x += (mouse.current.x - smoothed.current.x) * 0.05;
+    smoothed.current.y += (mouse.current.y - smoothed.current.y) * 0.05;
 
-    // Spring physics for natural deceleration with slight overshoot
-    const stiffness = 0.003;
-    const damping = 0.12;
-
-    const dx = tx - target.current.x;
-    const dy = ty - target.current.y;
-
-    velocity.current.x += dx * stiffness;
-    velocity.current.y += dy * stiffness;
-
-    velocity.current.x *= 1 - damping;
-    velocity.current.y *= 1 - damping;
-
-    target.current.x += velocity.current.x;
-    target.current.y += velocity.current.y;
-
-    // Micro-shake for organic/cinematic feel
-    const t = state.clock.elapsedTime;
-    const shakeX =
-      Math.sin(t * 1.1) * 0.015 + Math.sin(t * 2.3) * 0.008;
-    const shakeY =
-      Math.cos(t * 0.9) * 0.012 + Math.cos(t * 1.7) * 0.006;
-
-    camera.position.x = target.current.x + shakeX;
-    camera.position.y = target.current.y + shakeY;
+    camera.position.x = smoothed.current.x * 1.5;
+    camera.position.y = smoothed.current.y * 0.8;
     camera.lookAt(0, 0, 0);
   });
 
